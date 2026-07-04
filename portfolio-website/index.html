@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — IT Specialist & Developer</title>
+  <meta name="description" content="IT specialist and developer portfolio.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="#hero" class="nav__logo glitch" data-text="">&nbsp;</a>
+    <nav class="nav__links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact" class="nav__cta">Contact</a>
+    </nav>
+    <button class="nav__burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </header>
+
+  <main>
+
+    <section id="hero" class="hero">
+      <p class="hero__pre mono reveal">// hello world, I am</p>
+      <h1 class="hero__name glitch reveal" data-text=""></h1>
+      <p class="hero__role reveal"></p>
+      <p class="hero__tagline mono reveal"><span id="scramble-text"></span><span class="caret">▌</span></p>
+      <div class="hero__actions reveal">
+        <a href="#projects" class="btn btn--primary magnetic">View Projects</a>
+        <a href="#contact" class="btn btn--ghost magnetic">Get In Touch</a>
+      </div>
+      <a href="#about" class="hero__scroll-hint mono" aria-label="Scroll down">scroll<span class="hero__arrow">↓</span></a>
+    </section>
+
+    <section id="about" class="section">
+      <h2 class="section__title reveal"><span class="mono section__num">01.</span> About</h2>
+      <div class="about__grid">
+        <div class="terminal reveal" id="terminal">
+          <div class="terminal__bar">
+            <span class="terminal__dot terminal__dot--r"></span>
+            <span class="terminal__dot terminal__dot--y"></span>
+            <span class="terminal__dot terminal__dot--g"></span>
+            <span class="terminal__title mono">kyle@portfolio: ~</span>
+          </div>
+          <div class="terminal__body mono" id="terminal-body"></div>
+        </div>
+        <div class="stats reveal" id="stats"></div>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <h2 class="section__title reveal"><span class="mono section__num">02.</span> Skills</h2>
+      <div class="skills__grid" id="skills-grid"></div>
+    </section>
+
+    <section id="projects" class="section">
+      <h2 class="section__title reveal"><span class="mono section__num">03.</span> Projects</h2>
+      <div class="projects__grid" id="projects-grid"></div>
+    </section>
+
+    <section id="experience" class="section">
+      <h2 class="section__title reveal"><span class="mono section__num">04.</span> Experience</h2>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <section id="contact" class="section section--contact">
+      <h2 class="section__title reveal"><span class="mono section__num">05.</span> Contact</h2>
+      <h3 class="contact__heading reveal" id="contact-heading"></h3>
+      <p class="contact__blurb reveal" id="contact-blurb"></p>
+      <a class="btn btn--primary btn--big magnetic reveal" id="contact-email" href="#"></a>
+      <div class="contact__links reveal" id="contact-links"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer mono" id="footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
