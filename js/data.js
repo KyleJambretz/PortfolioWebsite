@@ -106,7 +106,7 @@ const SITE = {
     {
       period: "2020 — 2021",
       title: "Software Developer Intern",
-      place: "Medical Numerics Inc. (No Longer In Business)",
+      place: "Medical Numerics Inc. - Textron (No Longer In Business)",
       points: [
         "Created a Python Flask endpoint server for medical image processing.",
         "Participated in team meetings.",
