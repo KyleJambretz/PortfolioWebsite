@@ -92,7 +92,7 @@ const SITE = {
       description: "Hand-built portfolio with zero frameworks — canvas particle physics, custom cursor, and scroll-driven animation in vanilla JS.",
       tags: ["HTML", "CSS", "JavaScript", "Canvas"],
       link: ""
-    }
+    },
     {
       icon: "🏢",
       title: "Business Inventory System",
