@@ -36,7 +36,7 @@ const SITE = {
 
   stats: [
     { value: 8,  suffix: "+", label: "Years Tinkering" },
-    { value: 2,  suffix: "+", label: "Projects Shipped" },
+    { value: 3,  suffix: "+", label: "Projects Shipped" },
     { value: 1,   suffix: "",  label: "Homelab Servers" },
     { value: 100,  suffix: "%", label: " Obsession" }
   ],
@@ -92,6 +92,13 @@ const SITE = {
       description: "Hand-built portfolio with zero frameworks — canvas particle physics, custom cursor, and scroll-driven animation in vanilla JS.",
       tags: ["HTML", "CSS", "JavaScript", "Canvas"],
       link: ""
+    }
+    {
+      icon: "🏢",
+      title: "Business Inventory System",
+      description: "A small business local inventory system that works on events/history rather than variable mutation.",
+      tags: [".NET 10.0", "C#", "WPF", "XAML"],
+      link: "https://github.com/KyleJambretz/BusinessInventorySystem"
     }
   ],
 
