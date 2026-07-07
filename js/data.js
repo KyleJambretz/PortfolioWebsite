@@ -105,14 +105,14 @@ const SITE = {
       title: "Team 930 FRC (Robotics)",
       description: "During my highschool years I was a programmer for my local robotics team. I was also a team lead programmer for a year. During 2019 we went on to the worlds championship and took 2nd place alongside 2 other teams.",
       tags: ["Championship Finalist", "WPI", "FRC", "Java"],
-      link: "https://github.com/KyleJambretz/BusinessInventorySystem"
+      link: ""
     },
     {
       icon: "🛜",
       title: "Cyber Patriots",
       description: "During my highschool years I was part of a Cyber Patriots team, competing to secure Windows and Linux virtual machines.",
       tags: ["Servers", "Networking", "Terminal", "Bash"],
-      link: "https://github.com/KyleJambretz/BusinessInventorySystem"
+      link: ""
     },
   ],
 
