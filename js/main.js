@@ -85,93 +85,119 @@ function buildPage() {
   document.getElementById("footer").textContent = `© ${new Date().getFullYear()} ${SITE.name} — ${SITE.footer}`;
 }
 
-// background particles. took way too long to get the mouse push to feel right
-function initParticles() {
-  const canvas = document.getElementById("particle-canvas");
+// light pulses that travel along the background grid lines like network packets
+function initGridPulses() {
+  const canvas = document.getElementById("pulse-canvas");
+  if (reducedMotion) { canvas.remove(); return; }
   const ctx = canvas.getContext("2d");
-  let W, H, particles;
-  const mouse = { x: -9999, y: -9999 };
+  const GRID = 48;    // must match the css grid overlay size
+  const TRAIL = 150;  // fading tail length in px
+  const MAX = 6;
+  let W, H;
+  const pulses = [];
 
   function resize() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
-    // scale particle count with screen size, capped so big monitors dont melt
-    const count = Math.min(130, Math.floor((W * H) / 14000));
-    particles = Array.from({ length: count }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      r: Math.random() * 1.6 + 0.6
-    }));
+  }
+
+  function spawn() {
+    const horiz = Math.random() < 0.5;
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    // pick a random grid line to travel on, start just offscreen
+    const lanes = Math.floor((horiz ? H : W) / GRID) - 1;
+    if (lanes < 2) return;
+    const lane = GRID * (1 + Math.floor(Math.random() * lanes));
+    const start = horiz
+      ? { x: dir > 0 ? -TRAIL : W + TRAIL, y: lane }
+      : { x: lane, y: dir > 0 ? -TRAIL : H + TRAIL };
+    pulses.push({
+      pts: [{ ...start }, { ...start }], // [tail... corners ..., head]
+      dx: horiz ? dir : 0,
+      dy: horiz ? 0 : dir,
+      speed: 1.2 + Math.random() * 2,
+      color: Math.random() < 0.6 ? "34, 228, 255" : "160, 107, 255"
+    });
+  }
+
+  function step(p) {
+    const head = p.pts[p.pts.length - 1];
+    const before = p.dx ? head.x : head.y;
+    head.x += p.dx * p.speed;
+    head.y += p.dy * p.speed;
+
+    // sometimes turn 90° when crossing a grid intersection
+    const after = p.dx ? head.x : head.y;
+    const line = GRID * Math.round(after / GRID);
+    if ((before - line) * (after - line) < 0 && Math.random() < 0.3) {
+      if (p.dx) { head.x = line; p.dy = Math.random() < 0.5 ? 1 : -1; p.dx = 0; }
+      else      { head.y = line; p.dx = Math.random() < 0.5 ? 1 : -1; p.dy = 0; }
+      p.pts.push({ x: head.x, y: head.y });
+    }
+
+    // trim the tail so the trail never exceeds TRAIL px
+    let dist = 0;
+    for (let i = p.pts.length - 1; i > 0; i--) {
+      const a = p.pts[i], b = p.pts[i - 1];
+      const seg = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+      if (dist + seg > TRAIL) {
+        const k = (TRAIL - dist) / seg;
+        b.x = a.x + (b.x - a.x) * k;
+        b.y = a.y + (b.y - a.y) * k;
+        p.pts.splice(0, i - 1);
+        break;
+      }
+      dist += seg;
+    }
+  }
+
+  function draw(p) {
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = "round";
+    let dist = 0;
+    for (let i = p.pts.length - 1; i > 0; i--) {
+      const a = p.pts[i], b = p.pts[i - 1];
+      const seg = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+      // fade the tail out with distance from the head
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, `rgba(${p.color}, ${Math.max(0, 1 - dist / TRAIL) * 0.5})`);
+      grad.addColorStop(1, `rgba(${p.color}, ${Math.max(0, 1 - (dist + seg) / TRAIL) * 0.5})`);
+      ctx.strokeStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+      dist += seg;
+    }
+    // bright head dot
+    const head = p.pts[p.pts.length - 1];
+    ctx.fillStyle = `rgba(${p.color}, 0.9)`;
+    ctx.beginPath();
+    ctx.arc(head.x, head.y, 1.7, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   function frame() {
     ctx.clearRect(0, 0, W, H);
-    const linkDist = 130;
-
-    for (const p of particles) {
-      // push away from the mouse
-      const dx = p.x - mouse.x, dy = p.y - mouse.y;
-      const d2 = dx * dx + dy * dy;
-      if (d2 < 150 * 150 && d2 > 0.01) {
-        const d = Math.sqrt(d2);
-        const force = (150 - d) / 150 * 0.6;
-        p.vx += (dx / d) * force * 0.15;
-        p.vy += (dy / d) * force * 0.15;
-      }
-
-      p.x += p.vx; p.y += p.vy;
-      p.vx *= 0.985; p.vy *= 0.985;
-      // keep them drifting a bit so they never fully stop
-      if (Math.abs(p.vx) < 0.1) p.vx += (Math.random() - 0.5) * 0.04;
-      if (Math.abs(p.vy) < 0.1) p.vy += (Math.random() - 0.5) * 0.04;
-
-      // wrap at the edges
-      if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
-      if (p.y < -20) p.y = H + 20; else if (p.y > H + 20) p.y = -20;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(34, 228, 255, 0.55)";
-      ctx.fill();
-    }
-
-    // lines between close particles. n^2 but fine at this count
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < linkDist * linkDist) {
-          ctx.strokeStyle = `rgba(34, 228, 255, ${(1 - Math.sqrt(d2) / linkDist) * 0.18})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
+    for (let i = pulses.length - 1; i >= 0; i--) {
+      const p = pulses[i];
+      step(p);
+      draw(p);
+      const h = p.pts[p.pts.length - 1];
+      // gone well offscreen, retire it
+      if (h.x < -TRAIL - GRID || h.x > W + TRAIL + GRID || h.y < -TRAIL - GRID || h.y > H + TRAIL + GRID) {
+        pulses.splice(i, 1);
       }
     }
+    // stagger new spawns instead of dumping them all at once
+    if (pulses.length < MAX && Math.random() < 0.02) spawn();
     requestAnimationFrame(frame);
   }
 
   window.addEventListener("resize", resize);
-  window.addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  window.addEventListener("mouseout", () => { mouse.x = -9999; mouse.y = -9999; });
   resize();
-
-  if (reducedMotion) {
-    // just draw one static frame
-    for (const p of particles) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(34, 228, 255, 0.4)";
-      ctx.fill();
-    }
-  } else {
-    frame();
-  }
+  spawn(); spawn();
+  frame();
 }
 
 // hero tagline decode effect
@@ -242,9 +268,89 @@ function initTerminal() {
     })();
   }
 
+  // after the intro script finishes, hand the prompt over to the visitor
+  function startInteractive() {
+    const line = el("div", "t-input-line");
+    line.innerHTML = prompt;
+    const input = document.createElement("input");
+    input.className = "t-input mono";
+    input.setAttribute("aria-label", "Terminal input, type help for commands");
+    input.setAttribute("autocomplete", "off");
+    input.setAttribute("spellcheck", "false");
+    line.append(input);
+    body.append(line);
+    body.append(el("span", "t-out t-hint", 'type "help" to look around'));
+
+    // clicking anywhere in the terminal focuses the input
+    body.closest(".terminal").addEventListener("click", () => input.focus());
+
+    const history = [];
+    let histPos = -1;
+
+    input.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (history.length) {
+          histPos = histPos < 0 ? history.length - 1 : Math.max(0, histPos - 1);
+          input.value = history[histPos];
+        }
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (histPos >= 0) {
+          histPos++;
+          if (histPos >= history.length) { histPos = -1; input.value = ""; }
+          else input.value = history[histPos];
+        }
+      } else if (e.key === "Enter") {
+        const raw = input.value.trim();
+        input.value = "";
+        histPos = -1;
+        // echo the command as a static line above the input
+        const echo = el("div", "", prompt + `<span class="t-cmd">${esc(raw)}</span>`);
+        body.insertBefore(echo, line);
+        if (raw) {
+          history.push(raw);
+          runCommand(raw.toLowerCase());
+        }
+        body.scrollTop = body.scrollHeight;
+      }
+    });
+
+    function print(lines) {
+      lines.forEach(o => body.insertBefore(el("span", "t-out", esc(o)), line));
+    }
+
+    function runCommand(raw) {
+      const [cmd, ...args] = raw.split(/\s+/);
+      const commands = {
+        help: () => print([
+          "available commands:",
+          "  whoami      about       skills      projects",
+          "  contact     uptime      clear       ls",
+        ]),
+        whoami: () => print(SITE.terminal[0].out),
+        about: () => print(SITE.terminal[1].out),
+        cat: () => args[0] === "about.txt" ? print(SITE.terminal[1].out) : print([`cat: ${args[0] || ""}: no such file`]),
+        skills: () => print(SITE.skillGroups.flatMap(g => [g.title + ":", ...g.skills.map(s => "  " + s)])),
+        projects: () => print(SITE.projects.flatMap(p => [p.title + " — " + p.tags.join(", "), ...(p.link ? ["  " + p.link] : [])])),
+        contact: () => print([SITE.contact.email, ...SITE.contact.links.map(l => l.label + ": " + l.url)]),
+        ls: () => print(["about.txt  interests/  projects/  homelab/"]),
+        uptime: () => print(SITE.terminal[3].out),
+        clear: () => body.querySelectorAll(":scope > :not(.t-input-line)").forEach(n => n.remove()),
+        pwd: () => print(["/home/kyle/portfolio"]),
+        sudo: () => print(["kyle is not in the sudoers file. this incident will be reported."]),
+        rm: () => print(["nice try."]),
+        exit: () => print(["there is no escape. try 'contact' instead."]),
+        vim: () => print(["you're stuck now. (just kidding — :q works here)"]),
+        ":q": () => print(["phew."]),
+      };
+      (commands[cmd] || (() => print([`${cmd}: command not found — try 'help'`])))();
+    }
+  }
+
   function run(i) {
     if (i >= SITE.terminal.length) {
-      body.insertAdjacentHTML("beforeend", `<div>${prompt}<span class="caret">▌</span></div>`);
+      startInteractive();
       return;
     }
     typeCommand(SITE.terminal[i], () => run(i + 1));
@@ -373,7 +479,7 @@ function initNav() {
 
 document.addEventListener("DOMContentLoaded", () => {
   buildPage();
-  initParticles();
+  initGridPulses();
   initScramble();
   initTerminal();
   initReveals();

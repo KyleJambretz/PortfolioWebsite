@@ -89,10 +89,10 @@ const SITE = {
     {
       icon: "🌐",
       title: "This Website",
-      description: "Hand-built portfolio with zero frameworks — canvas particle physics, custom cursor, and scroll-driven animation in vanilla JS.",
-      tags: ["HTML", "CSS", "JavaScript", "Canvas"],
+      description: "Hand-built portfolio with zero frameworks — an interactive terminal, custom cursor, and scroll-driven animation in vanilla JS.",
+      tags: ["HTML", "CSS", "JavaScript"],
       link: ""
-    }
+    },
     {
       icon: "🏢",
       title: "Business Inventory System",
@@ -105,7 +105,7 @@ const SITE = {
   timeline: [
     {
       period: "2020 — 2021",
-      title: "Software Developer Intern",
+      title: "Software Engineer Intern",
       place: "Medical Numerics Inc. (No Longer In Business)",
       points: [
         "Created a Python Flask endpoint server for medical image processing.",

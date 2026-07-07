@@ -54,10 +54,47 @@ body::before {
   -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 30%, transparent 75%);
 }
 
-#particle-canvas {
+/* ambient background: two big soft color glows drifting very slowly */
+.bg-glow {
   position: fixed;
   inset: 0;
   z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-glow::before, .bg-glow::after {
+  content: "";
+  position: absolute;
+  width: 55vmax; height: 55vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+}
+.bg-glow::before {
+  top: -20vmax; left: -12vmax;
+  background: radial-gradient(circle, rgba(34, 228, 255, 0.07), transparent 60%);
+  animation: drift-a 40s ease-in-out infinite alternate;
+}
+.bg-glow::after {
+  bottom: -25vmax; right: -15vmax;
+  background: radial-gradient(circle, rgba(160, 107, 255, 0.07), transparent 60%);
+  animation: drift-b 50s ease-in-out infinite alternate;
+}
+@keyframes drift-a {
+  to { transform: translate(10vmax, 8vmax) scale(1.15); }
+}
+@keyframes drift-b {
+  to { transform: translate(-8vmax, -10vmax) scale(1.1); }
+}
+
+/* pulses travel on the grid, so they share its edge fade-out mask */
+#pulse-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 30%, transparent 75%);
 }
 
 main, .nav, .footer { position: relative; z-index: 2; }
@@ -315,11 +352,31 @@ main, .nav, .footer { position: relative; z-index: 2; }
   padding: 22px;
   font-size: .88rem;
   min-height: 300px;
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
   line-height: 1.8;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
 }
+.terminal__body .t-out { overflow-wrap: anywhere; }
 .terminal__body .t-prompt { color: var(--accent); }
 .terminal__body .t-cmd    { color: var(--text); }
 .terminal__body .t-out    { color: var(--text-dim); display: block; }
+.terminal__body .t-hint   { font-style: italic; opacity: .6; }
+
+/* the live prompt once the intro script finishes */
+.t-input-line { display: flex; align-items: baseline; }
+.t-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  caret-color: var(--accent);
+  padding: 0;
+}
 
 .stats {
   display: grid;
