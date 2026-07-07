@@ -37,7 +37,7 @@ const SITE = {
   stats: [
     { value: 8,  suffix: "+", label: "Years Tinkering" },
     { value: 3,  suffix: "+", label: "Projects Shipped" },
-    { value: 1,   suffix: "",  label: "Homelab Servers" },
+    { value: 2,   suffix: "",  label: "Internships" },
     { value: 100,  suffix: "%", label: " Obsession" }
   ],
 
@@ -57,7 +57,7 @@ const SITE = {
         "C++",
         "Python",
         "C# / .NET",
-        "Web (HTML/CSS/JS)"
+        "And many more..."
       ]
     },
     {
@@ -99,7 +99,21 @@ const SITE = {
       description: "A small business local inventory system that works on events/history rather than variable mutation.",
       tags: [".NET 10.0", "C#", "WPF", "XAML"],
       link: "https://github.com/KyleJambretz/BusinessInventorySystem"
-    }
+    },
+    {
+      icon: "🤖",
+      title: "Team 930 FRC (Robotics)",
+      description: "During my highschool years I was a programmer for my local robotics team. I was also a team lead programmer for a year. During 2019 we went on to the worlds championship and took 2nd place alongside 2 other teams.",
+      tags: ["Championship Finalist", "WPI", "FRC", "Java"],
+      link: "https://github.com/KyleJambretz/BusinessInventorySystem"
+    },
+    {
+      icon: "🛜",
+      title: "Cyber Patriots",
+      description: "During my highschool years I was part of a Cyber Patriots team, competing to secure Windows and Linux virtual machines.",
+      tags: ["Servers", "Networking", "Terminal", "Bash"],
+      link: "https://github.com/KyleJambretz/BusinessInventorySystem"
+    },
   ],
 
   timeline: [
