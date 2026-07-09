@@ -114,6 +114,13 @@ const SITE = {
       tags: ["Servers", "Networking", "Terminal", "Bash"],
       link: ""
     },
+    {
+      icon: "🛠️",
+      title: "ESP32 Uptime Status Light",
+      description: "An uptime light that sits on my monitor to track the status of my website.",
+      tags: ["ESP32", "Hardware", "TCP"],
+      link: "https://github.com/KyleJambretz/ESP32-Status-Light"
+    },
   ],
 
   timeline: [
