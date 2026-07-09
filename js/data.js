@@ -118,7 +118,7 @@ const SITE = {
       icon: "🛠️",
       title: "ESP32 Uptime Status Light",
       description: "An uptime light that sits on my monitor to track the status of my website.",
-      tags: ["ESP32", "Hardware", "TCP"],
+      tags: ["ESP32", "Hardware", "TCP", "CAD Modeling"],
       link: "https://github.com/KyleJambretz/ESP32-Status-Light"
     },
   ],
